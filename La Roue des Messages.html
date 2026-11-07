@@ -2,105 +2,12 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>La Roue des Messages</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%235b3fd1'/%3E%3Cpath d='M32 2v60M2 32h60M11 11l42 42M53 11L11 53' stroke='white' stroke-width='3'/%3E%3Ccircle cx='32' cy='32' r='9' fill='white'/%3E%3Ccircle cx='32' cy='32' r='5' fill='%235b3fd1'/%3E%3C/svg%3E">
-<style>
-:root{--bg:#f6f4fb;--card:#fff;--text:#22203a;--muted:#6b6785;--accent:#5b3fd1;--ring:#2e3192;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14121f;--card:#201d33;--text:#f1eefc;--muted:#a29dc0;--accent:#9d86ff;--ring:#cfc6ff}}
-:root[data-theme="dark"]{--bg:#14121f;--card:#201d33;--text:#f1eefc;--muted:#a29dc0;--accent:#9d86ff;--ring:#cfc6ff}
-*{box-sizing:border-box}
-html,body{margin:0;min-height:100%}
-body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;display:flex;flex-direction:column;align-items:center;padding:10px 16px 14px}
-h1{font-size:1.5rem;margin:2px 0 0;text-align:center}
-.sub{color:var(--muted);margin:0 0 14px;font-size:.95rem;text-align:center}
-.stage{position:relative;width:min(92vw,420px,46vh);aspect-ratio:1}
-#wheel{width:100%;height:100%;display:block;border-radius:50%;box-shadow:0 8px 30px rgba(0,0,0,.25);border:6px solid var(--ring)}
-.pointer{position:absolute;top:-10px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:15px solid transparent;border-right:15px solid transparent;border-top:32px solid var(--accent);filter:drop-shadow(0 2px 2px rgba(0,0,0,.4));z-index:3}
-#spin{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:33%;aspect-ratio:1;padding:0;display:flex;align-items:center;justify-content:center;line-height:1;text-align:center;border-radius:50%;border:4px solid #fff;background:var(--accent);color:#fff;font-weight:700;font-family:inherit;container-type:inline-size;cursor:pointer;z-index:2;box-shadow:0 3px 10px rgba(0,0,0,.35)}
-#spin:disabled{opacity:.6;cursor:default}
-#spin span{font-size:2.2vh;font-size:17cqw;letter-spacing:.03em;white-space:nowrap}
-.result{margin-top:16px;width:min(92vw,420px);background:var(--card);border-radius:18px;padding:14px 18px;text-align:center;box-shadow:0 4px 16px rgba(0,0,0,.12);min-height:84px;display:flex;flex-direction:column;justify-content:center;gap:8px}
-.cat{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:700}
-.msg{font-size:1.45rem;font-weight:700;line-height:1.3}
-.hint{color:var(--muted)}
-.pop{animation:pop .7s cubic-bezier(.2,.8,.3,1)}
-#fx{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:9}
-.pointer{transform-origin:50% 0;transition:transform .06s}
-@keyframes pop{0%{opacity:0;transform:translateY(16px) scale(.96);filter:blur(4px)}60%{opacity:1;transform:translateY(-3px) scale(1.01);filter:none}100%{opacity:1;transform:none;filter:none}}
-</style>
+<meta http-equiv="refresh" content="0; url=./">
+<script>location.replace('./' + location.hash);</script>
 </head>
 <body>
-<h1>🎡 La Roue des Messages</h1>
-<p class="sub" id="count"></p>
-<div class="stage">
-  <div class="pointer"></div>
-  <canvas id="wheel"></canvas>
-  <button id="spin" type="button"><span>TOURNER</span></button>
-</div>
-<canvas id="fx"></canvas>
-<div class="result" id="result"><span class="hint">Clique sur la roue pour recevoir ton message</span></div>
-
-<script>
-const DATA = {
-"Univers":["Fais confiance à l’univers","Suis ton cœur","Prends patience","Laisse les choses se dérouler","Respire profondément","De belles choses arrivent","Garde une pensée positive","Lâche prise sur tes soucis","Concentre-toi sur aujourd’hui","Savoure l’instant présent","Fais confiance au processus","Accueille le changement","Fais un petit pas","Écoute ton cœur","La gentillesse finit toujours par revenir","Un nouveau chemin s’ouvre","Remercie la vie aujourd’hui","Ton heure viendra","Tout s’aligne"],
-"Anges":["Une protection t’entoure","Fais confiance au timing divin","Les anges te guident","Une bénédiction arrive","Tu es entouré d’amour","La paix t’entoure","L’espoir brille devant toi","Suis ta lumière","Fais confiance à ton chemin","Les anges t’entendent","Ton cœur sait","Laisse l’amour te guider","De nouvelles portes s’ouvrent","La force est en toi","Une énergie de guérison circule","Un miracle se prépare","Ton esprit est fort"],
-"Chance":["Bonne chance aujourd’hui","La chance est de ton côté","Une journée chanceuse t’attend","La fortune te sourit","Quelque chose de formidable arrive","Une bonne nouvelle arrive","Une belle surprise t’attend","Le succès est proche","Ton moment arrive","Fais confiance à ton parcours","De nouvelles opportunités se présentent","Crois en toi","Une énergie positive circule","Tes efforts paient","Un moment de bonheur","Une joie inattendue","Un coup de chance","Tes rêves prennent forme","Un avenir radieux","De merveilleuses choses arrivent"],
-"Tarot":["Fais confiance à ton intuition","Le changement approche","Laisse le passé derrière toi","La patience est récompensée","Une vérité cachée apparaît","Une opportunité t’attend","Fais un pas audacieux","Un équilibre est nécessaire","Écoute attentivement","Quelque chose d’inattendu se prépare","Un nouveau départ t’attend","Fais confiance au bon moment","Concentre-toi sur tes objectifs","Libère-toi de tes peurs","Ton énergie attire"],
-"Affirmation":["Tu es formidable","Tu as du courage","Tu es fort","Tu es unique","Tu es merveilleux","Tu es plein de magie","Tu rends le monde meilleur","Tu peux y arriver","Crois en tes rêves","Fais confiance à ta magie","Suis tes rêves","Tes rêves comptent","Deviens la meilleure version de toi-même","N’abandonne jamais","Choisis le bonheur","Garde le sourire","Continue d’avancer","Aujourd’hui, c’est ton jour","Vois grand","Brille de mille feux","Étincelle chaque jour","Sois une étoile aujourd’hui","Reste magique","Sois bienveillant avec tout le monde","Répands la gentillesse","Sois fier de toi","Choisis la joie","Laisse ta lumière briller"],
-"Étoiles":["Brille comme une étoile","Garde ta curiosité","Quelque chose de merveilleux t’attend","Un moment de chance arrive","De grandes choses arrivent","Une occasion en or se présente","Une belle journée t’attend","Les étoiles te soutiennent","L’univers dit oui","Une énergie positive t’entoure","De bonnes énergies arrivent","La magie est autour de toi","Crois en la magie","Ton étoile se lève","Un chemin lumineux s’ouvre devant toi"],
-"Conseil":["Bois un grand verre d’eau","Sors prendre l’air dix minutes","Appelle quelqu’un que tu aimes","Range un petit coin, juste un","Dors un peu plus ce soir","Écris trois choses qui t’ont fait du bien","Commence par le plus difficile","Fais une pause avant de répondre","Étire-toi doucement","Mets ton téléphone de côté une heure","Dis merci à quelqu’un","Prépare-toi un vrai bon repas","Marche sans écouteurs aujourd’hui","Pose ta question à voix haute","Découpe ton gros projet en petites étapes","Relis ce que tu as accompli cette semaine","Dis non à ce qui t’épuise","Demander de l’aide n’est pas une faiblesse","Écoute ta musique préférée à fond","Fais ce que tu repousses depuis trop longtemps","Prends l’escalier","Ouvre la fenêtre et respire","Arrête de te comparer","Termine une chose avant d’en commencer une autre","Note ton idée avant qu’elle s’envole","Relâche tes épaules","Mange quelque chose de bon","Sors un petit peu de ta zone de confort","Donne des nouvelles à un vieil ami","Prends une douche chaude et laisse filer la journée","Choisis trois priorités, pas plus","Dis ce que tu ressens avec des mots simples","Pardonne-toi une erreur ancienne","Prévois quelque chose dont tu as envie","Offre-toi dix minutes de silence","Bouge ton corps, même un peu","Répare ce petit truc qui traîne","Observe le ciel un instant","Souris à un inconnu","Fais un compliment sincère","Joue de la musique juste pour le plaisir","Écris quelques lignes, même mauvaises","Accepte ce que tu ne peux pas changer","Fais d’abord, corrige ensuite","Ne remets pas à demain le premier pas","Choisis tes combats","Mange sans écran","Retiens ce qui compte, oublie le reste","Réponds à ce message qui attend","Prends soin de ton sommeil","Va regarder l’eau, ça apaise"],
-"Motivation":["Chaque jour compte","Les petits pas mènent loin","Tu es plus capable que tu ne le crois","Un échec est une étape, pas une fin","Continue, tu y es presque","Ce que tu fais aujourd’hui prépare demain","Ose, tu verras bien","La régularité bat le talent","Un essai raté vaut mieux qu’un regret","Tu as déjà traversé pire","Le meilleur moment pour commencer, c’est maintenant","Ton effort ne passe jamais inaperçu","Ne lâche rien, tu progresses","Fais-le pour toi","Transforme l’obstacle en tremplin","Aujourd’hui est une page blanche","Avance à ton rythme, mais avance","Tes limites reculent quand tu les pousses","Un pas de plus","Garde l’élan","Tes erreurs t’apprennent","Sois têtu, dans le bon sens","Le courage, c’est avancer malgré la peur","Tu deviens quelqu’un de bien","Croire, c’est déjà la moitié du chemin","Finis ce que tu as commencé","Le travail finit toujours par payer","Vise haut, avance doucement","Fais de ta journée un petit chef-d’œuvre","Ce n’est pas fini, c’est en cours","Tu as le droit de réussir","Tes rêves méritent ton énergie","L’audace ouvre des portes","Prouve-toi que tu peux","Reste fidèle à toi-même","Vas-y, lance-toi","Le plus dur, c’est de commencer","Fais mieux qu’hier, même de très peu","Tu as tout pour réussir"],
-"Douceur":["Tu as le droit de te reposer","Tout va bien se passer","Ce moment est précieux","Tu fais de ton mieux, et c’est suffisant","Respire, tu es en sécurité","Sois patient avec ton cœur","Rien ne presse pour tout comprendre","Tu mérites de la tendresse","Les orages passent toujours","Tu n’as pas à être parfait","Accueille ce que tu ressens","Un jour à la fois","Tu es exactement là où tu dois être","Prends ton temps","Ta sensibilité est une force","Laisse-toi porter","La lumière revient toujours","Un pas après l’autre, ça va aller","Sois ton meilleur ami aujourd’hui","Tu n’es pas seul","Chaque respiration est un nouveau départ","Le calme est en toi","Aujourd’hui, la douceur gagne","Tu as le droit de ralentir","Pose ce poids un instant","Même les jours gris ont leur beauté","Tes émotions sont légitimes","Offre-toi un moment de paix","Le temps apaise doucement","Garde ce qui te fait du bien","Écoute le silence","Le meilleur est peut-être à venir","Remercie pour une petite chose","Tu comptes pour quelqu’un","Ce que tu ressens passera","Repose-toi, tu l’as bien mérité","La vie sait ce qu’elle fait","Respire l’instant","Fais-toi confiance, tout doucement"],
-"Sagesse":["Le chemin compte autant que l’arrivée","Qui sème la gentillesse récolte l’amitié","La patience est une forme de courage","Ce qui est pour toi ne te manquera pas","Chaque fin cache un début","On apprend plus en tombant qu’en marchant","Le vrai luxe, c’est le temps","Mieux vaut un pas sûr que dix précipités","La simplicité est la clé","Les belles choses prennent du temps","Ce que tu donnes te revient","Rien n’est permanent, même les soucis","Sois l’eau, pas le rocher","L’essentiel est souvent simple","Chacun avance à son rythme","Écouter vaut mieux que répondre","Le présent est un cadeau","La vraie richesse est intérieure","Une graine plantée aujourd’hui devient un arbre","Ne juge pas la journée à sa première heure","Ce qui t’épuise te dit quelque chose","La curiosité garde jeune","Le rire est la plus belle des musiques","Les mots peuvent réparer ce que le silence a abîmé","Rester humble, c’est rester libre","Le plus beau voyage commence par un pas","Garde ton âme d’enfant","La musique adoucit les jours","Ton histoire n’est pas terminée","Les liens sincères valent de l’or","Un sourire peut changer une journée","Plus tu partages, plus tu reçois","Le bonheur se cache dans les détails","Choisis tes pensées, elles dessinent ta journée","Le courage se construit chaque jour"],
-"Fun":["Prends un café, le monde attendra","Aujourd’hui, tu as le droit à un dessert","Danse dans ta cuisine, personne ne regarde","Chante sous la douche, c’est thérapeutique","Un chat te dirait de faire la sieste","Même les pros improvisent","Tu es le héros de ta propre série","Aujourd’hui : zéro culpabilité, 100 % bonne humeur","Mets-toi en mode week-end","Les meilleures idées arrivent sous la douche","Une crêpe règle beaucoup de choses","Ta mission du jour : être de bonne humeur","Le canapé t’appelle, écoute-le un peu","Le monde a besoin de ton énergie, pas de ta perfection","Fais-toi un compliment devant le miroir","Mets une chanson et laisse faire le reste","Même un escargot arrive à destination","Les nuages sont juste du ciel qui se déguise","Hydrate-toi comme une plante au soleil","Prends la vie comme un bon morceau : avec du rythme","Pas de panique, il y a un plan B, et un plan C au chocolat","Ton énergie du jour : chaton au soleil","Fais une pause, les croissants ne sont pas pressés","Ose un pas de danse","Un peu de folie, beaucoup de bonheur","Aujourd’hui, tu mérites un high-five"]
-};
-const items=[];
-for(const c in DATA) DATA[c].forEach(t=>items.push({c,t}));
-const N=items.length;
-document.getElementById('count').textContent=N+' messages dans une seule roue';
-const COLORS=['#e63946','#f4a261','#e9c46a','#2a9d8f','#457b9d','#7b2cbf','#ef476f','#06a77d'];
-const cv=document.getElementById('wheel'),ctx=cv.getContext('2d');
-function draw(){
-  const s=cv.clientWidth,d=window.devicePixelRatio||1;
-  cv.width=cv.height=s*d;ctx.setTransform(d,0,0,d,0,0);
-  const r=s/2,a=2*Math.PI/N;
-  for(let i=0;i<N;i++){
-    ctx.beginPath();ctx.moveTo(r,r);
-    ctx.arc(r,r,r,-Math.PI/2+i*a,-Math.PI/2+(i+1)*a);ctx.closePath();
-    ctx.fillStyle=COLORS[i%COLORS.length];ctx.fill();
-    ctx.strokeStyle='rgba(255,255,255,.55)';ctx.lineWidth=.6;ctx.stroke();
-  }
-}
-draw();addEventListener('resize',draw);
-let rot=0,busy=false,ac=null,lastIdx=-1,lastT=0,flip=false;
-const ptr=document.querySelector('.pointer');
-function confetti(){const c=document.getElementById('fx'),x=c.getContext('2d');c.width=innerWidth;c.height=innerHeight;const P=[];for(let i=0;i<120;i++)P.push({x:innerWidth/2,y:innerHeight*.45,vx:(Math.random()-.5)*13,vy:-Math.random()*13-3,s:5+Math.random()*5,c:COLORS[i%COLORS.length],r:Math.random()*6});let f=0;(function go(){x.clearRect(0,0,c.width,c.height);P.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.r+=.2;x.fillStyle=p.c;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);x.restore()});if(++f<110)requestAnimationFrame(go);else x.clearRect(0,0,c.width,c.height)})()}
-const btn=document.getElementById('spin'),res=document.getElementById('result');
-btn.addEventListener('click',()=>{
-  if(busy)return;busy=true;btn.disabled=true;
-  res.innerHTML='<span class="hint">…</span>';
-  const t=Math.floor(Math.random()*N),off=.15+Math.random()*.7,a=360/N;
-  const targetMod=(360-(t+off)*a)%360;
-  const cur=rot%360;
-  let diff=targetMod-cur;if(diff<0)diff+=360;
-  const total=360*(5+Math.floor(Math.random()*3))+diff;
-  const start=rot,dur=5200,t0=performance.now();
-  (function step(now){
-    const p=Math.min((now-t0)/dur,1),e=1-Math.pow(1-p,4);
-    const ang=start+total*e;cv.style.transform='rotate('+ang+'deg)';
-    const idx=Math.floor(ang/a);
-    if(idx!==lastIdx){lastIdx=idx;if(now-lastT>45){lastT=now;flip=!flip;ptr.style.transform='translateX(-50%) rotate('+(flip?-16:0)+'deg)'}}
-    if(p<1)requestAnimationFrame(step);
-    else{
-      rot=start+total;busy=false;btn.disabled=false;
-      const it=items[t];
-      res.innerHTML='<span class="msg">'+it.t+'</span>';
-      res.classList.remove('pop');void res.offsetWidth;res.classList.add('pop');
-      ptr.style.transform='translateX(-50%)';confetti();
-    }
-  })(t0);
-});
-</script>
+<p><a href="./">Ouvrir La Roue des Messages</a></p>
 </body>
 </html>
